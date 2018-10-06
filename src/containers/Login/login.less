@@ -1,0 +1,95 @@
+@import "../../assets/styles/varLess";
+.login{
+  .align_text_center {
+    text-align: center
+  }
+  // background-image: url("../../assets/images/background.png");
+  .ant-form{
+    max-width: 440px;
+    position: relative;
+    width: 420px;
+    // border: 1px solid #fff;
+    // background: #fff;
+    padding-left: 20px;
+    padding-right: 20px;  
+    padding-top: 50px;
+    border-radius: 4px;
+    margin: auto;
+    margin-top: 50px;
+    .login__title{
+      width: 100%;
+      color: @font-color-1;
+      margin-top: 10px;
+      .login__title__panda{
+        // text-align: center;
+        // border-right: 1px solid;
+        padding: auto;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 15;
+        // align-items: center;
+      }
+      .login__title__login{
+        // width: 50%;
+        height: 45px;
+        line-height: 45px;
+        // padding-left: 5px;
+        font-size: @font-size-head-3  ;
+        margin-left: 15px;
+        font-weight: 600;
+        display: inline-block;
+      }
+    }
+    .login__greeting{
+      font-size: @font-size-head-1;
+      line-height: 40px;
+      min-height: 40px;
+      margin-top: -20px;
+      margin-bottom: 2px;
+      font-weight: 700;
+      a{
+        font-weight: 500;
+        font-size: @font-size-head-1;
+        padding-right: 0px;
+      };
+      width: 100%;
+      display: inline;
+    }  
+    .login__greeting__hi{
+      font-weight: 500;
+      font-size: @font-size-head-1;
+      // margin-bottom: 40
+    }
+    .login__form__align{
+      margin-top: 60px;
+    }
+    .login__form__input{
+      margin-top: 5px;
+    }
+    .login__input__warning{
+      border: @error-color !important;
+      &:hover, &:focus, &:active{
+        border: @error-color !important;
+        box-shadow:0 0 0 2px rgba(255, 56, 53, 0.2);
+        -webkit-box-shadow: 0 0 0 2px rgba(255, 56, 53, 0.2);
+      }
+    }
+    .ant-form-explain{
+      color: @error-color;
+      font-weight: 400;
+    }
+    .ant-btn-primary{
+      border: none;
+      width: 100%;
+      &:hover{
+        background: @primary-7;
+      }
+    }
+    .read-me {
+      font-size: 12px;
+    }
+  }
+}
+
+
+
