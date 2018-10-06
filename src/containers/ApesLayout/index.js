@@ -8,7 +8,7 @@ const {Header, Content, Sider, Footer} = Layout;
 
 class apesLayout extends React.Component {
   state = {
-    collapsed: false
+    collapsed: true
   };
   toggle = () => {
     this.setState(
@@ -37,14 +37,14 @@ class apesLayout extends React.Component {
           style={{backgroundColor: '#ffff',borderRightWidth : 0}}
         >
           <Menu theme="light" style={{border: null}} defaultSelectedKeys={['1']}>
-            <div className="logoSider">
-            <Icon
-              className="trigger"
-              type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-              onClick={this.toggle}
-              theme={"outlined"}
-            />
-            </div>
+            {/*<div className="logoSider">*/}
+            {/*<Icon*/}
+              {/*className="trigger"*/}
+              {/*type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}*/}
+              {/*onClick={this.toggle}*/}
+              {/*theme={"outlined"}*/}
+            {/*/>*/}
+            {/*</div>*/}
             {SIDER_LIST.map((item) => this.renderSiderMenuItem(item))}
           </Menu>
         </Sider>
