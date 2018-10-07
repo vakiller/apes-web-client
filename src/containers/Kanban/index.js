@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import initialData from './initialData';
 import {DragDropContext} from 'react-beautiful-dnd';
+import {Button, Col, Row} from 'antd';
+import AddNewColumn from '../../components/addNewColumn/addNewColumn';
 import Column from './column';
 import './index.css';
 
@@ -12,7 +14,7 @@ class KanBan extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {newdata: null};
+    this.state = {newdata: null,path : ''};
   };
 
   onDragEnd = result => {
@@ -44,7 +46,7 @@ class KanBan extends React.Component {
     // var updates = {};
     //     updates['/boards/board1/'] = newState;
     //     return firebase.database().ref().update(updates);
-  }
+  };
 
   componentDidMount() {
     const firebase = require('firebase');
@@ -55,31 +57,50 @@ class KanBan extends React.Component {
     });
   };
 
-  addNewTaskHandle = (nameTask, content) => {
+  addNewTaskHandle = (nameTask, content,path) => {
     const firebase = require('firebase');
-    firebase.database().ref('/boards/board1/columns/0/tasks').push({
+    console.log("333333 path Add Here ====>",path);
+    firebase.database().ref(path+'/tasks').push({
       id: nameTask,
       content: content
     });
-  }
+  };
+  deleteColumnHandle = (pathDelete) => {
+    const firebase = require('firebase');
+    firebase.database().ref(pathDelete).remove();
+  };
   renderPage = () => {
     if (this.state.newdata !== null) {
       console.log("2222 new Data ", this.state.newdata);
       return (
-        <DragDropContext
-          onDragEnd={this.onDragEnd}>
-          {this.state.newdata.map(thiscolumn => {
-            // const columnId = column.id;
-            // const thisColumn = column.columnId
-            const thistask = thiscolumn.tasks;
-            console.log(thistask);
-            return <Column addNewTask={(nameTask, Content) => this.addNewTaskHandle(nameTask, Content)}
-                           key={thiscolumn.id} column={thiscolumn} task={thistask}/>;
-          })
-            // const tasks = columnId.tasks;
-            // console.log(tasks);
-          }
-        </DragDropContext>
+        <Row>
+          <DragDropContext
+            onDragEnd={this.onDragEnd}>
+            {this.state.newdata.map(thiscolumn => {
+              // const columnId = column.id;
+              // const thisColumn = column.columnId
+              console.log("ListColumn ========>  ", thiscolumn);
+              const thistask = thiscolumn.tasks;
+              console.log(thistask);
+              return(
+              <Col span={7}>
+                <Column addNewTask={(nameTask, Content,path) => this.addNewTaskHandle(nameTask, Content,path)}
+                        key={thiscolumn.id} column={thiscolumn} path={`/boards/board1/columns/${thiscolumn.id}`} task={thistask}
+                        deleteColumnHandle={(pathDelete) => this.deleteColumnHandle(pathDelete)}
+                />;
+              </Col>);
+
+            })
+              // const tasks = columnId.tasks;
+              // console.log(tasks);
+            }
+          </DragDropContext>
+          <Col span={2}>
+            <div style={{marginTop: 70, marginLeft: 50, marginRight: 50}}>
+              <AddNewColumn path={'/boards/board1/columns'}/>
+            </div>
+          </Col>
+        </Row>
       );
     }
     else {

@@ -1,31 +1,55 @@
 import React from 'react';
-import { Card } from 'antd';
-import { Draggable } from 'react-beautiful-dnd';
+import {Card, Row, Col, Button} from 'antd';
+import {Draggable} from 'react-beautiful-dnd';
+import ModalEdit from '../../components/editTaskForm/editTaskForm';
 
-class Task extends React.Component 
-{
-    render()
-    {
-        console.log(this.props.task);
-        return (
-            <Draggable draggableId={this.props.task.id} index={this.props.index} >
-                {(provided) => (
-                        <div 
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                ref={provided.innerRef}
-                            >
-                            <Card title={this.props.task.id} style={{ width: 300 }} >
-                                {this.props.task.content}
-                            </Card>
-                        </div>
-                    )
-                }
-    
-            </Draggable>
-        );
-    }
-    
+class Task extends React.Component {
+  state = {
+    editModalVisible: false
+  };
+  closeAddHandler = (isClosed) => {
+    this.setState({editModalVisible: isClosed})
+  };
+  render() {
+    return (
+      <div>
+        <Draggable draggableId={this.props.task.id} index={this.props.index}>
+          {(provided) => (
+            <div
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              ref={provided.innerRef}
+            >
+              <Card title={this.props.task.id} style={{width: 300}}>
+                {this.props.task.content}
+              </Card>
+
+              <ModalEdit nameNow={this.props.task.id}
+                         contentNow={this.props.task.content}
+                         visible={this.state.editModalVisible}
+                         setVisible={() => this.setState({ editModalVisible : false })}
+                         path={this.props.path}
+              />
+            </div>
+          )
+          }
+
+        </Draggable>
+        <Button type="primary"
+                onClick={() => {
+                  this.setState({editModalVisible: true});
+                }}
+        />
+        <Button type="danger"
+                onClick={() => {
+                  this.props.deleteTask(this.props.index);
+                }}
+        />
+
+      </div>
+    );
+  }
+
 
 };
 export default Task;
