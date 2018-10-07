@@ -41,7 +41,6 @@ class Column extends React.Component {
     firebase.database().ref().update(updateT);
   };
   render() {
-    console.log(" ssadds", this.props.path);
     return (
       <Card
         style={{width: '100%'}}
@@ -61,7 +60,12 @@ class Column extends React.Component {
 
         </Row>
         <Button style={{marginBottom: 20}} type="primary"
-                onClick={() => this.props.addNewTask(this.state.newTaskName, this.state.newTaskContent,this.state.path)}>
+                onClick={() =>
+                {
+                  const id = this.props.index+'.'+this.state.tasks.length;
+                  const pathAdd = `${this.state.path}/tasks/${this.state.tasks.length}`;
+                  this.props.addNewTask(this.state.newTaskName, this.state.newTaskContent,pathAdd,id);
+                }}>
           Add New Task
         </Button>
         <Droppable droppableId={this.props.column.id}>
@@ -71,7 +75,6 @@ class Column extends React.Component {
               {...provided.droppableProps}
             >
               {this.state.tasks.map((task, index) => {
-                console.log("sadsdsadsadas", task);
                 const path= this.props.path;
                 return <Task
                           style={{padding: 10}}

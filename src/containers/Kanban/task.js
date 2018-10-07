@@ -20,11 +20,11 @@ class Task extends React.Component {
               {...provided.dragHandleProps}
               ref={provided.innerRef}
             >
-              <Card title={this.props.task.id} style={{width: 300}}>
+              <Card title={this.props.task.name} style={{width: 300}}>
                 {this.props.task.content}
               </Card>
 
-              <ModalEdit nameNow={this.props.task.id}
+              <ModalEdit nameNow={this.props.task.name}
                          contentNow={this.props.task.content}
                          visible={this.state.editModalVisible}
                          setVisible={() => this.setState({ editModalVisible : false })}

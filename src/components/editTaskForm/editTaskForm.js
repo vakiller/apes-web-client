@@ -8,7 +8,7 @@ class ModalEdit extends React.Component {
     console.log(e);
     // let updateT = {};
     let updateT = {
-      id : this.state.nameNow,
+      name : this.state.nameNow,
       content : this.state.contentNow
     };
     firebase.database().ref(this.props.path).update(updateT);
@@ -47,7 +47,6 @@ class ModalEdit extends React.Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          {this.props.path}
           <Input onChange={ (event) => this.newNameChange(event) } value={this.state.nameNow} placeholder="New Name" />
           <Input onChange={ (event) => this.newContentChange(event) } value={this.state.contentNow} placeholder="New Content" />
         </Modal>
