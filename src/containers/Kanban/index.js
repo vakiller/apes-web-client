@@ -77,7 +77,6 @@ class KanBan extends React.Component {
 
   componentDidMount() {
     const firebase = require('firebase');
-    firebase.auth().signInAnonymously().catch(err => alert(err));
     firebase.database().ref('/boards/board1/columns').on('value', snapshot => {
       this.setState({newdata: _.toArray(snapshot.val())})
     });

@@ -5,6 +5,7 @@ import {Form, Icon, Input, Button} from 'antd';
 import newlogo from '../../assets/logo/logo1.png';
 import {Layout} from 'antd';
 import BackgroundImage from '../../assets/images/background.png';
+import register from "../../registerServiceWorker";
 
 const {Footer} = Layout;
 
@@ -12,7 +13,8 @@ class UsernameLogin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isVerify : false
+      isVerify : false,
+      isRegister : false
     };
   }
 
@@ -46,7 +48,12 @@ class UsernameLogin extends React.Component {
 
   componentDidMount()
   {}
-
+  registerHandler =() =>
+  {
+    this.setState({
+      isRegister : true
+    });
+  };
   render() {
     // if (this.state.isLogin) {
     //   return <Redirect to={{
@@ -57,6 +64,12 @@ class UsernameLogin extends React.Component {
     {
       return <Redirect to={{
         pathname : "/login"
+      }} />
+    }
+    if(this.state.isRegister)
+    {
+      return <Redirect to={{
+        pathname: "/register"
       }} />
     }
     return (
@@ -95,6 +108,11 @@ class UsernameLogin extends React.Component {
               >
                 Next
               </Button>
+            </Form.Item>
+            <Form.Item style={{textAlign : 'center'}} >
+              <a onClick={() => this.registerHandler()} >
+                Đăng ký tài khoản mới
+              </a>
             </Form.Item>
           </div>
         </Form>
