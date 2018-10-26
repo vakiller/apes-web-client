@@ -2,6 +2,7 @@ import React from 'react';
 import {Layout, Menu, Icon} from 'antd';
 import './apesLayout.css';
 import HeaderContent from './headerContent/headerContent';
+import {Link} from 'react-router-dom';
 import { SIDER_LIST } from '../../constants';
 
 const {Header, Content, Sider, Footer} = Layout;
@@ -22,8 +23,10 @@ class apesLayout extends React.Component {
     const {id , name, route, icon} = item;
     return(
       <Menu.Item key={id}>
+        <Link to={{pathname : item.route}}>
         <Icon type={icon} />
         <span>{name}</span>
+        </Link>
       </Menu.Item>
     );
   };

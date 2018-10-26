@@ -1,5 +1,6 @@
 import React from 'react';
 import {Button, Row, Col, Popover} from 'antd';
+import { Actions } from '../../constants';
 
 class PopoverAddNewColumn  extends React.Component{
   constructor(props)
@@ -7,7 +8,7 @@ class PopoverAddNewColumn  extends React.Component{
     super(props);
     this.state = {
       path : this.props.path,
-      newColumnName : null
+      newColumnName : ''
     };
   }
   addNewHandle = () =>
@@ -20,6 +21,9 @@ class PopoverAddNewColumn  extends React.Component{
       newColumn.id = snap.key;
       const PathNow = this.state.path+'/'+snap.key;
       firebase.database().ref(PathNow).set(newColumn);
+      firebase.database().ref(localStorage.getItem('urlMeta')+"/logBoard").push(
+        localStorage.getItem("displayName")+[Actions[3].name]+this.state.newColumnName
+      );
     });
   };
   newNameHandle = (event) =>
@@ -45,7 +49,11 @@ class PopoverAddNewColumn  extends React.Component{
       </Row>
     );
     return(
-      <Popover style={{width : 'auto'}} content={Content}>
+      <Popover
+        style={{width : 'auto'}}
+        content={Content}
+        trigger={["click"]}
+      >
         <Button type="primary"  shape="circle" icon="plus" size="large" />
       </Popover>
     );

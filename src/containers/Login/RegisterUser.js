@@ -1,14 +1,19 @@
 import React from 'react';
 import './login.less';
 import {withRouter, Redirect} from 'react-router-dom';
-import {Form, Icon, Input, Button, notification} from 'antd';
+import {Form, Icon, Input, Button, notification,Modal} from 'antd';
 import newlogo from '../../assets/logo/logo1.png';
 import {Layout} from 'antd';
 import BackgroundImage from '../../assets/images/background.png';
 import {registerAccount} from './api/authenticate';
 
 const {Footer} = Layout;
-
+const ModalLoading = (
+  <div style={{textAlign : 'center'}}>
+    <Button shape="circle" loading />
+    Đang Tạo Tài Khoản...
+  </div>
+);
 class RegisterUser extends React.Component {
   constructor(props) {
     super(props);
@@ -21,17 +26,20 @@ class RegisterUser extends React.Component {
       notificationMess  : '',
       notificationTitle : '',
       notificationOpen : false,
-      isLogin : false
+      isLogin : false,
+      loading : false
     };
   }
   handleSubmit = async () => {
     this.setState({
-      errMessage : ''
+      errMessage : '',
+      loading : true
     });
     if(this.state.password !== this.state.repassword)
     {
       this.setState(
         {
+          loading : false,
           errMessage : 'Mật khẩu không trùng khớp'
         }
       );
@@ -39,8 +47,11 @@ class RegisterUser extends React.Component {
     else
     {
       let mess = await registerAccount(this.state.name,this.state.email,this.state.password);
+      this.setState({
+        loading : false
+      });
       console.log(mess);
-      if(mess == "OK")
+      if(mess == "Ok")
       {
         this.setState({
           isLogin : true,
@@ -52,7 +63,19 @@ class RegisterUser extends React.Component {
           message : this.state.notificationTitle,
           description : this.state.notificationMess
         });
-      };
+      }
+      else{
+        this.setState({
+          isLogin : false,
+          notificationOpen : true,
+          notificationTitle : 'Unsuccessful!',
+          notificationMess : mess.message
+        });
+        notification['error']({
+          message : this.state.notificationTitle,
+          description : this.state.notificationMess
+        });
+      }
     }
   };
 
@@ -164,6 +187,11 @@ class RegisterUser extends React.Component {
               </Button>
             </Form.Item>
           </div>
+          <Modal visible={this.state.loading}
+            footer={null}
+          >
+            {ModalLoading}
+          </Modal>
         </Form>
         <Footer style={{textAlign: 'center'}}>
           Copyright @2018 AT12C-ApesTeam

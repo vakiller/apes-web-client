@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Row, Col, Button} from 'antd';
 import {Draggable} from 'react-beautiful-dnd';
-import ModalEdit from '../../components/editTaskForm/editTaskForm';
+import ModalEdit from '../../../components/editTaskForm/editTaskForm';
 
 class Task extends React.Component {
   state = {
@@ -20,7 +20,7 @@ class Task extends React.Component {
               {...provided.dragHandleProps}
               ref={provided.innerRef}
             >
-              <Card title={this.props.task.name} style={{width: 300}}>
+              <Card title={this.props.task.name} style={{width: '100%'}}>
                 {this.props.task.content}
               </Card>
 
@@ -35,12 +35,14 @@ class Task extends React.Component {
           }
 
         </Draggable>
-        <Button type="primary"
+        <Button
+                icon={"edit"}
                 onClick={() => {
                   this.setState({editModalVisible: true});
                 }}
         />
         <Button type="danger"
+                icon={"delete"}
                 onClick={() => {
                   this.props.deleteTask(this.props.index);
                 }}

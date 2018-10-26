@@ -1,5 +1,6 @@
 import ApesLayout from './ApesLayout/';
 import KanBan from './Kanban';
-import { PasswordLogin ,UsernameLogin,RegisterUser } from './Login'
+import User from './User';
+import { UsernameLogin,RegisterUser } from './Login'
 
-export { ApesLayout, PasswordLogin , UsernameLogin, RegisterUser, KanBan };
+export { ApesLayout, UsernameLogin, RegisterUser, KanBan, User };

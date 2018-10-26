@@ -1,30 +1,46 @@
 import React from 'react';
 import { Col , Row, Input,Icon } from 'antd';
-const {Search} = Input;
+import { Redirect } from 'react-router-dom';
 
-const headerContent = (props) =>
+class headerContent extends React.Component
 {
-  return(
-    <Row>
-      <Col span={6}>
-        <img  width={50} height={50} src={require('../../../assets/logo/logo1.png')} />
-        <img  width={80} height={30} src={require('../../../assets/logo/logoName.png')} />
-      </Col>
-      <Col span={12}>
-        <Search
-          placeholder="input search text"
-          onSearch={value => console.log(value)}
-          style={{ width: "100%",height : '64px'  }}
+  state={
+    isLogout: false
+  };
+  logoutHandler = () =>
+  {
+    const firebase = require('firebase');
+    firebase.auth().signOut();
+    localStorage.clear();
+    this.setState({isLogout : true})
+  };
+  render()
+  {
+    if(this.state.isLogout)
+    {
+      return(
+        <Redirect
+          to={{pathname : "/"}}
         />
-      </Col>
-      <Col span={6}>
-        <div style={{float : 'right'}}>
-          <a>
-            <Icon type="logout" style={{fontSize : 25,color : 'black'}} theme="outlined" />
-          </a>
-        </div>
-      </Col>
-    </Row>
-  );
-};
+      );
+    }
+    return(
+      <Row>
+        <Col span={6}>
+          <img  width={50} height={50} src={require('../../../assets/logo/logo1.png')} />
+          <img  width={80} height={30} src={require('../../../assets/logo/logoName.png')} />
+        </Col>
+        <Col span={12}>
+        </Col>
+        <Col span={6}>
+          <div style={{float : 'right'}}>
+            <a onClick={() => this.logoutHandler()} >
+              <Icon type="logout" style={{fontSize : 25,color : 'black'}} theme="outlined" />
+            </a>
+          </div>
+        </Col>
+      </Row>
+    );
+  }
+}
 export default headerContent;

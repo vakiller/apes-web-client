@@ -1,146 +1,125 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import initialData from './initialData';
-import {DragDropContext} from 'react-beautiful-dnd';
-import {Button, Col, Row} from 'antd';
-import AddNewColumn from '../../components/addNewColumn/addNewColumn';
-import Column from './column';
-import './index.css';
+import {Card, Divider, Row, Col,Icon, Button} from 'antd';
+import './style.less';
+import BoardThum from '../../components/boardThumnail/boardThumnail';
+import _ from 'lodash';
+import CreateBoard from './createBoard/createBoard';
+import {Redirect,Link} from 'react-router-dom';
+const BASE_URL = "/boards";
 
-const firebase = require('firebase/app');
-const _ = require('lodash');
-
-class KanBan extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {newdata: null, path: ''};
+class ListKanban extends React.Component {
+  state = {
+    dataBoards : [],
+    boardsAccepting : [],
+    isAddNew : false
   };
-
-  onDragEnd = result => {
-    console.log(" ========> After Drag And Drop", result);
-    const {destination, source, draggableId} = result;
-    if (!destination) {
-      return null;
-    }
-    if ((destination.droppableId === source.droppableId) && destination.index === source.index) {
-      return;
-    }
-    if ((destination.droppableId === source.droppableId) && destination.index !== source.index) {
-      const ColumnChange = destination.droppableId;
-      this.state.newdata.map(column => {
-        if (column.id === ColumnChange) {
-          const tasksArray = _.toArray(column.tasks);
-          const taskChanged = tasksArray[source.index];
-          tasksArray.splice(source.index, 1);
-          tasksArray.splice(destination.index, 0, taskChanged);
-          console.log(`/boards/board1/columns/${ColumnChange}/tasks`);
-          var updateT = {};
-          updateT[`/boards/board1/columns/${ColumnChange}/tasks`] = tasksArray;
-          return firebase.database().ref().update(updateT);
-        }
-      });
-    }
-    if (destination.droppableId !== source.droppableId) {
-      console.log("in hrere  ...........");
-      const ColumnLostId = source.droppableId;
-      const ColumnHaveId = destination.droppableId;
-      let taskChanged;
-      this.state.newdata.map(column => {
-        if(column.id === ColumnLostId)
-        {
-          const taskLost = _.toArray(column.tasks);
-          taskChanged = taskLost[source.index];
-          taskLost.splice(source.index,1);
-          console.log(`/boards/board1/columns/${ColumnLostId}/tasks`);
-          var updateT = {};
-          updateT[`/boards/board1/columns/${ColumnLostId}/tasks`] = taskLost;
-          return firebase.database().ref().update(updateT);
-        }
-
-
-      });
-      this.state.newdata.map( column => {
-        if(column.id === ColumnHaveId)
-        {
-          const taskHave = _.toArray(column.tasks);
-          console.log(`/boards/board1/columns/${ColumnHaveId}/tasks`);
-          taskHave.splice(destination.index,0,taskChanged);
-          var updateT = {};
-          updateT[`/boards/board1/columns/${ColumnHaveId}/tasks`] = taskHave;
-          return firebase.database().ref().update(updateT);
-        }
-      });
-
-    }
-  };
-
   componentDidMount() {
     const firebase = require('firebase');
-    firebase.database().ref('/boards/board1/columns').on('value', snapshot => {
-      this.setState({newdata: _.toArray(snapshot.val())})
+    let Url = "/"+localStorage.getItem('uid')+"/boardsAccepting";
+    console.log("aasdasdas ",Url);
+    return firebase.database().ref(Url).on('value',(snapshot) =>{
+      console.log("=======================> ", snapshot.val());
+      this.setState({
+        boardsAccepting : _.toArray(snapshot.val())
+      });
+      this.state.boardsAccepting.map((item,index) => {
+        console.log("vsacas ",item);
+        this.getBoard(item);
+      });
+    });
+
+  }
+  renderThumnail = () =>
+  {
+    if(this.state.dataBoards !== null)
+    {
+      return this.state.dataBoards.map((item,index) => {
+        console.log("In render Thum ",item);
+        return(
+          <Col span={4} key={index} style={{marginRight: 20}}>
+            <Link
+              to={{pathname : `/kanban/${item.url}`,params : {
+                  trueUrl : item.trueUrl
+                }}}
+              onClick={() => {
+                localStorage.setItem('url',item.trueUrl+"/columns");
+                localStorage.setItem('urlMeta',item.trueUrl);
+
+              }}
+            >
+            <BoardThum owner={item.by} imgSrc={item.imageId}>
+              {item.nameBoard}
+            </BoardThum>
+            </Link>
+          </Col>
+        );
+      });
+    }
+  };
+  getBoard(url)
+  {
+    console.log("HEHERER");
+    const firebase = require('firebase');
+    return firebase.database().ref(url).on('value',(snapshot) =>{
+      console.log("=======================> ", snapshot.val());
+      let dataBoardNow = this.state.dataBoards;
+      // if(dataBoardNow.id)
+      let isDuplicate = false;
+      let itemDuplicate = null;
+       dataBoardNow.map((item,index) => {
+        if(item.id === snapshot.val().id)
+        {
+          isDuplicate = true;
+          itemDuplicate = index;
+        }
+
+      });
+      if(isDuplicate === true)
+      {
+        const snap = snapshot.val();
+        snap.trueUrl = url;
+        dataBoardNow[itemDuplicate] = snap;
+      }
+      if(isDuplicate === false)
+      {
+        const snap = snapshot.val();
+        snap.trueUrl = url;
+        dataBoardNow.push(snap);
+      }
+      this.setState({
+        dataBoards : dataBoardNow
+      });
     });
   };
-
-  addNewTaskHandle = (nameTask, content, path, id) => {
-    const firebase = require('firebase');
-    let TaskContent = {};
-    TaskContent.name = nameTask;
-    TaskContent.content = content;
-    TaskContent.id = id;
-    firebase.database().ref(path).set(TaskContent);
+  closeAdd = () =>{
+    this.setState({
+      isAddNew : false
+    });
   };
-  deleteColumnHandle = (pathDelete) => {
-    const firebase = require('firebase');
-    firebase.database().ref(pathDelete).remove();
-  };
-  renderPage = () => {
-    if (this.state.newdata !== null) {
-      return (
-        <Row>
-          <DragDropContext
-            onDragEnd={this.onDragEnd}>
-            {this.state.newdata.map((thiscolumn, index) => {
-              // const columnId = column.id;
-              // const thisColumn = column.columnId
-              const thistask = thiscolumn.tasks;
-              console.log(thistask);
-              return (
-                <Col key={thiscolumn.id} span={7}>
-                  <Column
-                    addNewTask={(nameTask, Content, path, id) => this.addNewTaskHandle(nameTask, Content, path, id)}
-                    key={thiscolumn.id} index={index} column={thiscolumn}
-                    path={`/boards/board1/columns/${thiscolumn.id}`} task={thistask}
-                    deleteColumnHandle={(pathDelete) => this.deleteColumnHandle(pathDelete)}
-                  />;
-                </Col>);
-
-            })
-              // const tasks = columnId.tasks;
-              // console.log(tasks);
-            }
-          </DragDropContext>
-          <Col span={2}>
-            <div style={{marginTop: 70, marginLeft: 50, marginRight: 50}}>
-              <AddNewColumn path={'/boards/board1/columns'}/>
-            </div>
-          </Col>
-        </Row>
-      );
-    }
-    else {
-      return "Data is loading";
-    }
-  };
-
   render() {
     console.log(this.state);
     return (
-      <div>
-        {this.renderPage()}
+      <div className={"container_style"}>
+        <Divider orientation={"left"}>
+          <Icon type="home" theme="filled" style={{marginRight : 10}} />
+          Các bảng của {localStorage.getItem('displayName')}
+        </Divider>
+        <Row style={{height : 300}}>
+          {this.renderThumnail()}
+        </Row>
+        <Divider orientation={"left"}>
+          <Icon type="home" theme="filled" style={{marginRight : 10}} />
+          Tạo bảng mới
+        </Divider>
+        <CreateBoard closeModalHandle={() => this.closeAdd()} visible={this.state.isAddNew} />
+        <Button type={"primary"} onClick={() => {
+          this.setState({isAddNew : true})
+        }}>
+          Add new Board
+        </Button>
       </div>
     );
   };
 }
 
-export default KanBan;
+export default ListKanban;

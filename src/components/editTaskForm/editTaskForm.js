@@ -42,7 +42,7 @@ class ModalEdit extends React.Component {
     return (
       <div>
         <Modal
-          title="Basic Modal"
+          title="Chỉnh sửa task"
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}

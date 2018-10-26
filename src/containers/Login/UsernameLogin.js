@@ -6,6 +6,8 @@ import newlogo from '../../assets/logo/logo1.png';
 import {Layout} from 'antd';
 import BackgroundImage from '../../assets/images/background.png';
 import register from "../../registerServiceWorker";
+import {Login} from './api/authenticate';
+const firebase = require('firebase');
 
 const {Footer} = Layout;
 
@@ -13,41 +15,55 @@ class UsernameLogin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isVerify : false,
-      isRegister : false
+      isLogin : false,
+      isRegister : false,
+      username : '',
+      password : '',
+      errMess : ''
     };
   }
-
-
-  onChange = (event) => {
+  onUsernameChange = (event) => {
     this.setState({
       disabled: false,
       username: event.target.value
     })
   };
-
-  handleSubmit = async () => {
-
+  onPassChange = (event) => {
     this.setState({
-      isVerify : true
-    });
-    // let verifyReturn = await verifyUsername(this.state.username);
-    // console.log(verifyReturn);
-    // if (verifyReturn.httpCode === 200) {
-    //   console.log(verifyReturn);
-    //   localStorage.setItem('username', verifyReturn.username);
-    //   localStorage.setItem('clientKey', verifyReturn.clientKey);
-    //   localStorage.setItem('userId', verifyReturn.userId);
-    //   localStorage.setItem('email', verifyReturn.email);
-    //   this.setState({isHaveClientKey: true});
-    // }
-    // else {
-    //   this.setState({errMessage: verifyReturn.error.message});
-    // }
+      disabled: false,
+      password: event.target.value
+    })
   };
+  handleSubmit = async () => {
+    let mess = await Login(this.state.username,this.state.password);
+    if(mess === "Ok")
+    {
+      this.setState({
+        isLogin : true
+      });
+    }
+    else{
+      console.log("--------> ", mess);
+      this.setState({
+        errMess : mess
+      });
+      console.log(this.state.errMess);
+    }
 
+  };
   componentDidMount()
-  {}
+  {
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user)
+      {
+        this.setState({isLogin : true})
+      }
+      else
+      {
+        this.setState({isLogin : false})
+      }
+    })
+  }
   registerHandler =() =>
   {
     this.setState({
@@ -55,16 +71,12 @@ class UsernameLogin extends React.Component {
     });
   };
   render() {
-    // if (this.state.isLogin) {
-    //   return <Redirect to={{
-    //     pathname: "/dashboard"
-    //   }}/>
-    // };
-    if(this.state.isVerify)
+    if(this.state.isLogin)
     {
       return <Redirect to={{
-        pathname : "/login"
-      }} />
+        pathname: "/kanban"
+      }}
+      />
     }
     if(this.state.isRegister)
     {
@@ -92,15 +104,31 @@ class UsernameLogin extends React.Component {
                 name="username"
                 autoFocus
                 prefix={<Icon type="user" style={{color: '#5a5a5a'}}/>}
-                // placeholder="Email or Username"
-                onChange={this.onChange}
+                placeholder="Email or Username"
+                onChange={this.onUsernameChange}
                 // value={username}
                 className={`login__form__input `}
                 size="large"
                 // value={this.state.username}
               />
             </Form.Item>
-            <Form.Item>
+            <Form.Item
+              help={this.state.errMess}
+            >
+              <Input
+                name="password"
+                prefix={<Icon type="lock" style={{color: '#5a5a5a'}}/>}
+                placeholder="Enter your Password"
+                onChange={this.onPassChange}
+                // value={username}
+                className={`login__form__input `}
+                size="large"
+                type={"password"}
+                // value={this.state.username}
+              />
+            </Form.Item>
+            <Form.Item
+            >
               <Button
                 type="primary"
                 size="large"

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router , Route ,Switch  } from 'react-router-dom';
-import { ApesLayout , UsernameLogin, PasswordLogin , RegisterUser , KanBan} from './containers/';
+import { ApesLayout , UsernameLogin, PasswordLogin , RegisterUser , KanBan, User} from './containers/';
+import KanbanDetail from './containers/Kanban/detailBoard';
 const firebase = require('firebase');
 
 class App extends Component {
@@ -22,11 +23,13 @@ class App extends Component {
       <Router>
         <Switch>
           <Route exact  path="/" component={UsernameLogin} />
-          <Route exact  path="/login" component={PasswordLogin} />
           <Route exact path="/register" component={RegisterUser} />
           <ApesLayout>
+            <Route exact path="/user" component={User}/>
             <Route exact path="/kanban" component={KanBan}/>
+            <Route exact path="/kanban/:id" component={KanbanDetail}/>
           </ApesLayout>
+          <Route path="*"  />
         </Switch>
       </Router>
     );
